@@ -3,19 +3,21 @@
 VictoryConnectClient::VictoryConnectClient()
 {
     tcpClient = new TCPClient();
-   
+    logger.SetClass("VictoryConnectClient");
 }
 
 bool VictoryConnectClient::Connect(string host)
 {
     do
-    {
-        cout << "Connecting to server at " << host << endl;
+    {   
+        logger.Log("Connect", "Connecting to server at: " + host);
+       
 
         if (tcpClient->setup(host, 9000))
         {
+            logger.Log("Connect", "Connected to server!");
             tcpClient->Send("0 0 id victory_cv");
-            cout << "TCP Start" << endl;
+            logger.Log("Connect", "Sent ID Packet!");
             connected = true;
             thread tcpRecTread(VictoryConnectClient::recv_loop,tcpClient);
             tcpRecTread.detach();
@@ -23,7 +25,7 @@ bool VictoryConnectClient::Connect(string host)
         }
         else
         {
-            cout << "Failed Connection. Attempting in 3s" <<endl;
+            logger.Log("Connect", "Failed to connect. Retrying in 3s");
             connected = false;
             sleep(3.0);
         }
@@ -37,7 +39,9 @@ bool VictoryConnectClient::SendPacket(int type, string topic, string value){
 
 void VictoryConnectClient::recv_loop(TCPClient *client)
 {
-    cout << "Starting Client Loop" << endl;
+    Logger logger;
+    logger.SetClass("VictoryConnectClient-Static");
+    logger.Log("recv_loop", "Starting Recieve Loop.");
     while (1)
     {
 

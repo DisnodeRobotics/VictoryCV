@@ -4,12 +4,14 @@
 #include <signal.h>
 #include <thread>
 #include <string.h>
+#include "../logging/Logger.h"
 using namespace std;
 
 class VictoryConnectClient
 {
   private:
     TCPClient *tcpClient;
+    Logger logger;
     bool connected;
     void sig_exit(int s)
     {
