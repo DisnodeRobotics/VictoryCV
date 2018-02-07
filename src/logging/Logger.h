@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include "../termcolor/termcolor.hpp"
 using namespace std;
 class Logger{
     private:
@@ -7,5 +8,8 @@ class Logger{
     public:
         void SetClass(string className);
         
-        void Log(string functionName, string toLog);
+        void Info(string functionName, string toLog);
+        void Warning(string functionName, string toLog);
+        void Error(string functionName, string toLog);
+        void Success(string functionName, string toLog);
 };

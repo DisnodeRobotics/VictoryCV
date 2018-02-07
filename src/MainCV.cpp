@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     vcClient = new VictoryConnectClient();
     vcClient->Connect("127.0.0.1");
-    cout<<"Starting CV" << endl;
+    //cout<<"Starting CV" << endl;
     while(true){}
     cv::VideoCapture cap1;
     cv::VideoCapture cap2;

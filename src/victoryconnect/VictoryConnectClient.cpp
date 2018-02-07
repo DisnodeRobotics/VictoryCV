@@ -10,14 +10,14 @@ bool VictoryConnectClient::Connect(string host)
 {
     do
     {   
-        logger.Log("Connect", "Connecting to server at: " + host);
+        logger.Info("Connect", "Connecting to server at: " + host);
        
 
         if (tcpClient->setup(host, 9000))
         {
-            logger.Log("Connect", "Connected to server!");
+            logger.Success("Connect", "Connected to server!");
             tcpClient->Send("0 0 id victory_cv");
-            logger.Log("Connect", "Sent ID Packet!");
+            logger.Info("Connect", "Sent ID Packet.");
             connected = true;
             thread tcpRecTread(VictoryConnectClient::recv_loop,tcpClient);
             tcpRecTread.detach();
@@ -25,7 +25,7 @@ bool VictoryConnectClient::Connect(string host)
         }
         else
         {
-            logger.Log("Connect", "Failed to connect. Retrying in 3s");
+            logger.Error("Connect", "Failed to connect. Retrying in 3s");
             connected = false;
             sleep(3.0);
         }
@@ -41,7 +41,7 @@ void VictoryConnectClient::recv_loop(TCPClient *client)
 {
     Logger logger;
     logger.SetClass("VictoryConnectClient-Static");
-    logger.Log("recv_loop", "Starting Recieve Loop.");
+    logger.Info("recv_loop", "Starting Recieve Loop.");
     while (1)
     {
 
