@@ -3,6 +3,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS -pthread)
 find_package( OpenCV REQUIRED )
 
-file(GLOB SOURCES src/*.cpp)
+file(GLOB_RECURSE SOURCES src/*.cpp)
+
 add_executable( VictoryCV ${SOURCES} )
 target_link_libraries( VictoryCV ${OpenCV_LIBS} )
