@@ -34,7 +34,17 @@ int main(int argc, char *argv[])
     cout << "TCP Start" << endl;
     std::thread tcpTread(tcp_client_loop);
 
-    cv::VideoCapture cap;
+    cv::VideoCapture cap1;
+    cv::VideoCapture cap2;
+    cv::VideoCapture cap3;
+
+    cap1.set(CV_CAP_PROP_FRAME_WIDTH , 352);
+    cap1.set(CV_CAP_PROP_FRAME_HEIGHT , 288);
+    cap2.set(CV_CAP_PROP_FRAME_WIDTH , 352);
+    cap2.set(CV_CAP_PROP_FRAME_HEIGHT , 288);
+    cap3.set(CV_CAP_PROP_FRAME_WIDTH , 352);
+    cap3.set(CV_CAP_PROP_FRAME_HEIGHT , 288);
+
     // open the default camera, use something different from 0 otherwise;
     // Check VideoCapture documentation.
     cv::Mat source;
@@ -42,12 +52,26 @@ int main(int argc, char *argv[])
     cv::Mat channels[3];
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
-    if (!cap.open(0))
+    if (!cap1.open(0))
+        return 0;
+    if (!cap1.open(2))
+        return 0;
+    if (!cap1.open(3))
         return 0;
     for (;;)
     {
+        cv::Mat source1;
+        cv::Mat source2;
+        cv::Mat source3;
+        
+        cap1 >> source1;
+        cap2 >> source2;
+        cap3 >> source3;
 
-        cap >> source;
+
+        cv::hconcat(source1,source2,output);
+    
+
         cvtColor(source, output, cv::COLOR_BGR2YUV);
         cv::blur(output, output, cv::Size(20, 20));
 
