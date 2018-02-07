@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 {
     signal(SIGINT, sig_exit);
 
-    tcp.setup("127.0.0.1", 9000);
+    tcp.setup("pi3-01.local", 9000);
     tcp.Send("0 0 id victory_cv");
     cout << "TCP Start" << endl;
     std::thread tcpTread(tcp_client_loop);
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
             float area = boundRect[i].area();
 
-            if (std::abs(2 - boundRect[i].width / boundRect[i].height) < 1)
+            if (std::abs(1 - boundRect[i].width / boundRect[i].height) < 1)
             {
                 if (area > chosenArea)
                 {
