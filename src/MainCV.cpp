@@ -1,39 +1,17 @@
 #include <iostream>
 #include <signal.h>
-#include "TCPClient.h"
+#include "victoryconnect/VictoryConnectClient.h"
 #include <thread>
 #include "opencv2/opencv.hpp"
-TCPClient tcp;
 
-void sig_exit(int s)
-{
-    tcp.exit();
-    exit(0);
-}
-void tcp_client_loop()
-{
-    cout << "Starting Client Loop" << endl;
-    while (1)
-    {
+VictoryConnectClient *vcClient;
 
-        string rec = tcp.receive();
-        if (rec != "")
-        {
-            cout << "Server Response:" << rec << endl;
-            tcp.Send("0 0 heartbeat no_data");
-        }
-        sleep(0.1);
-    }
-}
 int main(int argc, char *argv[])
 {
-    signal(SIGINT, sig_exit);
-
-    tcp.setup("pi3-01.local", 9000);
-    tcp.Send("0 0 id victory_cv");
-    cout << "TCP Start" << endl;
-    std::thread tcpTread(tcp_client_loop);
-
+    vcClient = new VictoryConnectClient();
+    vcClient->Connect("127.0.0.1");
+    //cout<<"Starting CV" << endl;
+    while(true){}
     cv::VideoCapture cap1;
     cv::VideoCapture cap2;
     cv::VideoCapture cap3;
@@ -127,7 +105,7 @@ int main(int argc, char *argv[])
 
         double pos = chosenRect.x + chosenRect.width;
 
-        tcp.Send("0 0 cv " + to_string(pos));
+        vcClient->SendPacket(0,"cv",to_string(pos));
 
         if (source.empty())
             break; // end of video stream
