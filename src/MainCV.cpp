@@ -3,11 +3,60 @@
 #include "victoryconnect/VictoryConnectClient.h"
 #include <thread>
 #include "opencv2/opencv.hpp"
-
+#include "InputDevice.h"
+#include "detectors/CubeDetector.h"
+#include "detectors/IntakeDetector.h"
+#include "detectors/ScaleDetector.h"
+#include "detectors/SwitchDetector.h"
 VictoryConnectClient *vcClient;
 
 int main(int argc, char *argv[])
-{
+{   
+
+
+    InputDevice device0;
+    device0.Init(0);
+    device0.Enable();
+
+    std::shared_ptr<CubeDetector> cubeDector;
+    cubeDector.reset(new CubeDetector());
+    cubeDector->Init();
+
+    std::shared_ptr<IntakeDetector> intakeDector;
+    intakeDector.reset(new IntakeDetector());
+    intakeDector->Init();
+
+    std::shared_ptr<ScaleDetector> scaleDector;
+    scaleDector.reset(new ScaleDetector());
+    scaleDector->Init();
+
+    std::shared_ptr<SwitchDetector> switchDector;
+    switchDector.reset(new SwitchDetector());
+    switchDector->Init();
+
+
+    std::vector<std::shared_ptr<DetectorBase>> detectors;
+
+    detectors.push_back(std::move(cubeDector));
+    detectors.push_back(std::move(intakeDector));
+    detectors.push_back(std::move(scaleDector));
+    detectors.push_back(std::move(switchDector));
+
+
+    int index = 0;
+
+    while(true){
+        std::cout<<"Main Thread Running"<<std::endl;
+        
+
+        device0.SetDetector(detectors[index]);
+        index++;
+        if(index >= detectors.size()){
+            index = 0;
+        }
+         std::this_thread::sleep_for( std::chrono::seconds(1) );
+    }
+    /*
     vcClient = new VictoryConnectClient();
     vcClient->Connect("127.0.0.1");
     //cout<<"Starting CV" << endl;
@@ -114,6 +163,6 @@ int main(int argc, char *argv[])
         if (cv::waitKey(10) == 27)
             break; // stop capturing by pressing ESC
     }
-
+    */
     return 0;
 }

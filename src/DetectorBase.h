@@ -3,8 +3,8 @@
 class DetectorBase
 {
     public:
-        virtual void Init();
-        virtual void Process(cv::Mat* inputMat);
-        virtual void Stop();
+        virtual void Init(){}
+        virtual void Process(cv::Mat* inputMat, cv::Mat* outputMat){}
+        virtual void Stop(){}
 
 };
