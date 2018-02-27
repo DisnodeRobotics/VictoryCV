@@ -18,6 +18,14 @@ int main(int argc, char *argv[])
     device0.Init(0);
     device0.Enable();
 
+    //InputDevice device1;
+    //device0.Init(1);
+    //device0.Enable();
+
+   // InputDevice device2;
+    ///device0.Init(3);
+    //device0.Enable();
+
     std::shared_ptr<CubeDetector> cubeDector;
     cubeDector.reset(new CubeDetector());
     cubeDector->Init();
@@ -50,11 +58,11 @@ int main(int argc, char *argv[])
         
 
         device0.SetDetector(detectors[index]);
-        index++;
+        //index++;
         if(index >= detectors.size()){
             index = 0;
         }
-         std::this_thread::sleep_for( std::chrono::seconds(1) );
+         std::this_thread::sleep_for( std::chrono::seconds(3) );
     }
     /*
     vcClient = new VictoryConnectClient();
