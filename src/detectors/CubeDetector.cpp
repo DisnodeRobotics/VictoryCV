@@ -1,5 +1,5 @@
 #include "CubeDetector.h"
-void CubeDetector::Init()
+void CubeDetector::Init(VictoryConnectClient *vcClient)
 {
 }
 
@@ -10,6 +10,7 @@ void CubeDetector::Process(cv::Mat *inputMat, cv::Mat *outputMat)
     cv::Mat mask;
     cv::Mat workingMat;
     cv::Mat channels[3];
+    
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
 
@@ -45,7 +46,9 @@ void CubeDetector::Process(cv::Mat *inputMat, cv::Mat *outputMat)
     std::vector<cv::Point2f> center(contours.size());
     std::vector<float> radius(contours.size());
 
-    cv::Rect chosenRect;
+    std::vector<cv::Rect> foundCubes_Rects;
+    std::vector<cv::Mat> foundCubes_Track;
+    std::vector<double> foundCubes_Score;
     double chosenScore = 0;
     /// Draw polygonal contour + bonding rects + circles
     for (int i = 0; i < contours.size(); i++)
@@ -55,19 +58,40 @@ void CubeDetector::Process(cv::Mat *inputMat, cv::Mat *outputMat)
 
         float area = boundRect[i].area();
         double score = calculate_score(boundRect[i]);
-        if (score > min_score &&  area > chosenScore)
+        if (score > min_score && area > chosenScore)
         {
-            chosenRect = boundRect[i];
-            chosenScore = score;
+            foundCubes_Rects.push_back(boundRect[i]);
+            foundCubes_Score.push_back(score);
         }
     }
-    cv::Scalar color = cv::Scalar(0, 255, 255);
-    cv::putText(displayMat, "Score: " + std::to_string(chosenScore), chosenRect.tl(),0,0.7,cv::Scalar(0,255,0),1);
-    cv::rectangle(displayMat, chosenRect.tl(), chosenRect.br(), color, 2, 4, 0);
+
+    for (int i = 0; i < foundCubes_Rects.size(); i++)
+    {
+        cv::Scalar color = cv::Scalar(0, 255, 255);
+        cv::putText(displayMat, "Score: " + std::to_string(foundCubes_Score[i]), foundCubes_Rects[i].tl(), 0, 0.7, cv::Scalar(0, 255, 0), 1);
+
+        cv::rectangle(displayMat, foundCubes_Rects[i].tl(), foundCubes_Rects[i].br(), color, 2, 4, 0);
+
+        foundCubes_Track.push_back( displayMat(foundCubes_Rects[i]));
+
+        if (foundCubes_Track[i].cols > 0)
+        {
+
+           cv::imshow("Track " + i, foundCubes_Track[i]);
+        }
+
+        foundCubes_Track[i].release();
+    }
+
     displayMat.copyTo(*outputMat);
+
     displayMat.release();
     mask.release();
     workingMat.release();
+    for(int i=0;i<3;i++){
+        channels[i].release();
+    }
+    
 }
 
 void CubeDetector::Stop()
@@ -100,9 +124,12 @@ double CubeDetector::calculate_score(cv::Rect inputRect)
     double m_area = inputRect.area();
     double m_screen_area = working_frame_size.area();
     double m_area_perc = m_area / m_screen_area;
-    if(m_area_perc > area_max || m_area_perc < area_min){return 0;}
+    if (m_area_perc > area_max || m_area_perc < area_min)
+    {
+        return 0;
+    }
     double m_area_normalized = (m_area_perc - area_min) / (area_max - area_min);
-    double m_area_dif = std::abs(area_max-m_area_normalized) * 100 * area_weight;
+    double m_area_dif = std::abs(area_max - m_area_normalized) * 100 * area_weight;
     double m_area_score = 100 - m_area_dif;
 
     std::cout << "Area Score: " << m_area_score << std::endl;

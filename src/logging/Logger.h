@@ -1,3 +1,5 @@
+#ifndef Included_Logger_H
+#define Included_Logger_H
 #include <iostream>
 #include <string.h>
 #include "../termcolor/termcolor.hpp"
@@ -13,3 +15,4 @@ class Logger{
         void Error(string functionName, string toLog);
         void Success(string functionName, string toLog);
 };
+#endif 

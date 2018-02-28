@@ -1,3 +1,5 @@
+#ifndef Included_VictoryConnectClient_H
+#define Included_VictoryConnectClient_H
 #define PORT = 9000
 #include <iostream>
 #include "tcp/TCPClient.h"
@@ -25,3 +27,4 @@ class VictoryConnectClient
     bool SendPacket(int type, string topic, string value);
     bool isConnected();
 };
+#endif
