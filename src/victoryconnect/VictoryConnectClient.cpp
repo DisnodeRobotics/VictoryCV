@@ -13,10 +13,10 @@ bool VictoryConnectClient::Connect(string host)
         logger.Info("Connect", "Connecting to server at: " + host);
        
 
-        if (tcpClient->setup(host, 9000))
+        if (tcpClient->setup(host, 5800))
         {
             logger.Success("Connect", "Connected to server!");
-            tcpClient->Send("0 0 id victory_cv");
+            tcpClient->Send("0 0 id {victory_cv}");
             logger.Info("Connect", "Sent ID Packet.");
             connected = true;
             thread tcpRecTread(VictoryConnectClient::recv_loop,tcpClient);
@@ -49,7 +49,7 @@ void VictoryConnectClient::recv_loop(TCPClient *client)
         if (rec != "")
         {
             //cout << "Server Response:" << rec << endl;
-            client->Send("0 0 heartbeat no_data");
+            client->Send("0 0 heartbeat {no_data}");
         }
         sleep(0.1);
     }

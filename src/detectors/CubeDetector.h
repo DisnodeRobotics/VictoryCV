@@ -6,6 +6,7 @@
 class CubeDetector : public DetectorBase
 {   
     private: 
+        std::unique_ptr< cv::VideoWriter> outStream;
         cv::Size working_frame_size;
         double min_score = 50;
         double area_weight = 0.5;

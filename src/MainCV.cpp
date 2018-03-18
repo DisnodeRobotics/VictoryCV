@@ -12,7 +12,8 @@ VictoryConnectClient *vcClient;
 
 int main(int argc, char *argv[])
 {   
-
+    vcClient = new VictoryConnectClient();
+    vcClient->Connect("localhost");
 
     InputDevice device0;
     device0.Init(0);
@@ -56,13 +57,13 @@ int main(int argc, char *argv[])
     while(true){
         std::cout<<"Main Thread Running"<<std::endl;
         
-
+        vcClient->SendPacket(0,"cv_cube", "{hi;}");
         device0.SetDetector(detectors[index]);
         //index++;
         if(index >= detectors.size()){
             index = 0;
         }
-         std::this_thread::sleep_for( std::chrono::seconds(3) );
+         std::this_thread::sleep_for( std::chrono::milliseconds(100) );
     }
     /*
     vcClient = new VictoryConnectClient();

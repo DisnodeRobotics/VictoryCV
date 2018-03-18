@@ -1,6 +1,7 @@
 #include "CubeDetector.h"
 void CubeDetector::Init(VictoryConnectClient *vcClient)
 {
+     
 }
 
 void CubeDetector::Process(cv::Mat *inputMat, cv::Mat *outputMat)
@@ -10,7 +11,7 @@ void CubeDetector::Process(cv::Mat *inputMat, cv::Mat *outputMat)
     cv::Mat mask;
     cv::Mat workingMat;
     cv::Mat channels[3];
-    
+
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
 
@@ -72,15 +73,27 @@ void CubeDetector::Process(cv::Mat *inputMat, cv::Mat *outputMat)
 
         cv::rectangle(displayMat, foundCubes_Rects[i].tl(), foundCubes_Rects[i].br(), color, 2, 4, 0);
 
-        foundCubes_Track.push_back( displayMat(foundCubes_Rects[i]));
+        foundCubes_Track.push_back(displayMat(foundCubes_Rects[i]));
 
         if (foundCubes_Track[i].cols > 0)
         {
 
-           cv::imshow("Track " + i, foundCubes_Track[i]);
+            cv::imshow("Track " + i, foundCubes_Track[i]);
         }
 
         foundCubes_Track[i].release();
+    }
+    
+    if(outStream.get() == nullptr){
+        outStream.reset(new cv::VideoWriter("/home/alex/FRC/video/output.avi", CV_FOURCC('X','V','I','D'),10, displayMat.size(), true));
+    }
+    if (outStream->isOpened())
+    {
+        outStream->write(displayMat);
+    }
+    else
+    {
+        std::cout << "Cant Writ" << std::endl;
     }
 
     displayMat.copyTo(*outputMat);
@@ -88,10 +101,10 @@ void CubeDetector::Process(cv::Mat *inputMat, cv::Mat *outputMat)
     displayMat.release();
     mask.release();
     workingMat.release();
-    for(int i=0;i<3;i++){
+    for (int i = 0; i < 3; i++)
+    {
         channels[i].release();
     }
-    
 }
 
 void CubeDetector::Stop()
